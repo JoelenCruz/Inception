@@ -10,7 +10,7 @@ all: set_host
 	@ docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 set_host:
-	@ sudo grep -q $(DOMAIN_NAME) /etc/hosts || sudo sed -i "3i127.0.0.1\t$(DOMAIN_NAME)" /etc/hosts
+	@ sudo grep -q $(DOMAIN_NAME) /etc/hosts || echo "127.0.0.1 $(DOMAIN_NAME)" | sudo tee -a /etc/hosts
 
 up:
 	@ sudo docker-compose -f ./srcs/docker-compose.yml up --build --detach
