@@ -4,7 +4,7 @@ ARG CERTS_
 ARG CERTS_KEY
 ARG WORDPRESS_URL
 
-RUN apt update -y && apt upgrade -y && apt install -y \
+RUN apt update -y && apt upgrade && apt install -y \
 	nginx \
 	openssl \
 	gettext-base

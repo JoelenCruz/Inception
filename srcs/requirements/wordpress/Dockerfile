@@ -2,7 +2,7 @@ FROM debian:oldstable
 
 WORKDIR /var/www/html/
 
-RUN apt update -y && apt upgrade -y && apt install -y \
+RUN apt update -y && apt upgrade && apt install -y \
 	php-fpm \
 	php-mysql \
 	mariadb-client \

@@ -4,7 +4,7 @@ ARG WORDPRESS_DB_NAME
 ARG WORDPRESS_DB_USER
 ARG WORDPRESS_DB_PASSWORD
 
-RUN apt update -y && apt upgrade -y && apt install mariadb-server -y
+RUN apt update -y && apt upgrade && apt install mariadb-server -y
 
 RUN echo "[mysqld] \n\
 skip-networking=0 \n\

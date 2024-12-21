@@ -1,82 +1,82 @@
-# 🏗️ Inception - 42 Project
+<h1 align="center">
+	✏️ Inception
+</h1>
 
-This project, part of the 42 School curriculum, focuses on deepening your knowledge of **system administration** through the use of **Docker**. The goal is to virtualize multiple services, such as a database, a web server, and a content management system, within isolated **Docker containers**.
+<p align="center"><br>
+Esse projeto visa ampliar seu conhecimento em administração de sistemas usando Docker.
+Você vai virtualizar diversas imagens Docker, criando Docker Containers em sua nova máquina virtual.<br>
+</p>
 
----
-
-## **📜 Overview**
-
-### **Project Requirements**
-- Use `docker-compose` to orchestrate the infrastructure.
-- Each Docker service must run in its **dedicated container**.
-- Containers must be built from the penultimate stable version of **Debian** or **Alpine**.
-- Write custom `Dockerfiles` for each service.
-- Connect the containers through a `docker network`.
-- Store data persistently using `docker volumes`.
-
-### **Infrastructure**
-- **NGINX**:
-  - Acts as an HTTP/HTTPS server.
-  - Implements SSL/TLS encryption (auto-signed certificates are generated during the build).
-- **MariaDB**:
-  - Relational database used to store WordPress data.
-- **WordPress**:
-  - A CMS (Content Management System) to serve as your project’s website.
-- **Custom Domain**:
-  - Configured in `/etc/hosts` to access the website locally via a domain like `jcruz-da.42.fr`.
+<p align="center">
+	<img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/rafaelabdm/Inception?color=lightblue" />
+	<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/rafaelabdm/Inception?color=blue" />
+	<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/rafaelabdm/Inception?color=green" />
+</p>
 
 ---
 
-## **⚙️ How It Works**
+<h2>📦 Sobre o projeto</h2>
 
-### **Workflow**
+> _One container is not enogh. We need to go deeper_
+<p>
+Nesse projeto temos que criar uma pequena infraestrutura composta de diferentes serviços, seguindo regras específicas:<br><br>
+REGRAS GERAIS<br>
+  • Usar docker-compose;<br>
+  • Cada imagem Docker tem que ter o nome igual ao de seu serviço;<br>
+  • Cada serviço tem que rodar em seu próprio container;<br>
+  • Os containers tem que ser construídos a partir da penúltima versão estável de Debian ou Alpine;<br>
+  • Escrever nossos próprios Dockerfiles;<br>
+  • Chamar os Dockerfiles através do docker-compose.yml que, por sua vez, é chamado pelo Makefile;<br>
+  • Nenhuma credencial deve estar exposta fora do arquivo .env!!!!!!!!!!!!<br>
+  <br>
+REGRAS INFRAESTRUTURA<br>
+  • Um container com NGINX usando apenas o protocolo TLSv1.2 ou TLSv1.3;<br>
+  • Um container com WordPress + php-fpm, sem NGINX;<br>
+  • Um container com MariaDB, sem NGINX;<br>
+  • Um volume com a base de dados do WordPress;<br>
+  • Um segundo volume com os arquivos do site do WordPress;<br>
+  • Uma docker-network que estabelece a conexão entre os containers.<br>
 
-1. **Volumes for Data Persistence**:
-   - MariaDB and WordPress data are stored in `docker volumes` mapped to local folders for persistence.
-   - These folders ensure that your data is not lost when containers are rebuilt.
+</p>
 
-2. **Custom Domain Setup**:
-   - The `Makefile` includes a rule (`set_host`) to configure a local domain like `jcruz-da.42.fr` in your `/etc/hosts` file.
+<h2>🔨 Um pouco sobre os serviços</h2>
 
-3. **Automated Certificate Generation**:
-   - SSL certificates are auto-generated during the build process and stored inside the NGINX container.
+<p>
+💾<b> MARIADB:</b> Banco de dados, necessário para a instalação do Wordpress (os requisitos são PHP e um banco MySQL já instalados e configurados). Precisamos intalar, 
+fazer uma pequena configuração e criar a tabela que o Wordpress vai usar.<br>
+🌐<b> WORDPRESS:</b> Nosso site! Ele precisa de um banco de dados e php instalados para conseguir ser usado. Também precisa já estar instalado quando subirmos o container, 
+para isso, usaremos wp-cli.<br>
+🔒<b> NGINX:</b> Nosso servidor de HTTP e proxy. Vai ser nossa porta de entrada para a infraestrutura que estamos criando. Ele vai lidar com o protocolo de acesso ao nosso site. <br>
+</p>
 
-4. **Dynamic NGINX Configuration**:
-   - NGINX uses a template (`default.template`) to dynamically configure the server based on environment variables.
+<h2>💻 Como usar</h2>
+<p>
+Em um computador com Docker instalado, crie um arquivo .env dentro da pasta srcs e dê make! <br>
+Pronto, você deve ter um site Wordpress rodando no seu <a href="https://localhost:443">localhost:443</a>. Acesse seu navegador e teste o projeto 😉. <br>
+<br>
+No arquivo <TT>.env</TT> criado, modifique o nome dessas variáveis que deve tudo rodar normalmente:
+</p>
 
----
+```
+# MariaDB Access
+WORDPRESS_DB_HOST=XXXXXXX #Aqui precisa ser necessariamente "mariadb"
+WORDPRESS_DB_NAME=XXXXXXX
+WORDPRESS_DB_USER=XXXXXXX
+WORDPRESS_DB_PASSWORD=XXXXXXX
 
-## **🚀 Getting Started**
+# Wordpress Access
+WORDPRESS_URL=XXXXXXX
+WORDPRESS_ADMIN_USER=XXXXXXX
+WORDPRESS_ADMIN_PASSWORD=XXXXXXX
+WORDPRESS_ADMIN_EMAIL=XXXXXXX@XXXXXXX
 
-### **Prerequisites**
-- Docker
-- Docker Compose
-- Access to `/etc/hosts` with `sudo` (for domain configuration)
+WORDPRESS_GUEST_USER=XXXXXXX
+WORDPRESS_GUEST_PASSWORD=XXXXXXX
+WORDPRESS_GUEST_EMAIL=XXXXXXX@XXXXXXX
 
-### **Setup Steps**
-
-1. **Clone the Repository**:
-   ```bash
-   git clone <repository_url>
-   cd inception
-
-```bash
-WORDPRESS_DB_HOST="mariadb"
-WORDPRESS_DB_NAME="wordpress_db"
-WORDPRESS_DB_USER="admin"
-WORDPRESS_DB_PASSWORD="password"
-
-WORDPRESS_URL="jcruz-da.42.fr"
-
-WORDPRESS_ADMIN_USER="admin"
-WORDPRESS_ADMIN_PASSWORD="admin123"
-WORDPRESS_ADMIN_EMAIL="admin@example.com"
-
-WORDPRESS_GUEST_USER="guest"
-WORDPRESS_GUEST_PASSWORD="123"
-WORDPRESS_GUEST_EMAIL="guest@example.com"
-
-CERTS_="/etc/ssl/certs/server.crt"
-CERTS_KEY="/etc/ssl/private/server.key"
+# Certs
+CERTS_=/etc/ssl/certs/XXXXXXX.crt
+CERTS_KEY=/etc/ssl/private/XXXXXXX.key
+```
 
 
